@@ -31,17 +31,8 @@ def execute_sql(conn, sql):
 def add_book_genre(conn, genre):
     pass
     sql = '''
-        INSERT INTO genres (genre)
-        VALUES (?)
-        '''
-    cur = conn.cursor()
-    cur.execute(sql, genre)
-    conn.commit()
-    
-def add_book_genre(conn, genre):
-    sql = '''
-        INSERT INTO genres (genre)
-        VALUES (?)
+        INSERT INTO genres (genre, description)
+        VALUES (?, ?)
         '''
     cur = conn.cursor()
     cur.execute(sql, genre)
@@ -49,12 +40,12 @@ def add_book_genre(conn, genre):
                 
 def add_book_genres(conn, genres_list):
     for genre in genres_list:
-        add_book_genre(conn, (genre,))
+        add_book_genre(conn, genre)
 
 def add_book(conn, book):
     sql = '''
-        INSERT INTO books (title, author, genre)
-        VALUES (?, ?, ?)
+        INSERT INTO books (title, author, year, genre)
+        VALUES (?, ?, ?, ?)
         '''
     cur = conn.cursor()
     cur.execute(sql, book)
@@ -66,7 +57,7 @@ def add_books(conn, books_list):
     # or
     cur = conn.cursor()
     cur.executemany('''
-        INSERT INTO books (title, author, genre)
-        VALUES (?, ?, ?)
+        INSERT INTO books (title, author, year, genre)
+        VALUES (?, ?, ?, ?)
                 ''', books_list)
     conn.commit()
