@@ -22,7 +22,8 @@ create_genres_table_sql = \
     """
     CREATE TABLE IF NOT EXISTS genres (
     id INTEGER PRIMARY KEY,
-    genre TEXT)
+    genre TEXT,
+    description TEXT)
     """
 
 create_books_table_sql = \
@@ -31,6 +32,7 @@ create_books_table_sql = \
         id INTEGER PRIMARY KEY,
         title TEXT,
         author TEXT,
+        year INTEGER,
         genre TEXT,
         FOREIGN KEY (genre) REFERENCES genres (id))
     """
@@ -38,32 +40,45 @@ create_books_table_sql = \
 execute_sql(conn, create_genres_table_sql)
 execute_sql(conn, create_books_table_sql)
 
-# add_book_genre(conn, ('horror',)) # passed argument has to be a tuple
+# add_book_genre(conn, ('horror', "scary")) # passed argument has to be a tuple
 
-# for gen in ['hor', 'mov']:
-#     add_book_genre(conn, (gen,))
+
 
 add_book_genres(conn, 
-                ['Action and adventure',
-                 'Comedy', 
-                 'Crime and mistery', 
-                 'Fantasy', 
-                 'Horror', 
-                 'Science fiction',
-                 'Romance',
-                 'Scientific',
-                 'Technical'])
+                [('Action and adventure', 'hero, adventure, journey'),
+                 ('Comedy', 'funny, parody, excitement'), 
+                 ('Crime and mistery', 'crime, criminal, investigation, punishment'), 
+                 ('Fantasy', 'magic, creatures, mythology'), 
+                 ('Horror', 'fear, dread, terror, monster'), 
+                 ('Science fiction', 'futuristic, science, time travel'),
+                 ('Romance', 'love, relationship'),
+                 ('Scientific', 'science, theory, empiricism'),
+                 ('Technical', 'research, experiment, technology')])
 
-add_books(conn,
-          [
-              ("Misery", "Stephen King", 'Horror'),
-              ("The Call of Cthulhu", "H.P. Lovecraft", 'Fantasy')
-          ])
+the_books_list = [
+              ("Don Quixote", "de Cervantes, Miguel", 1605, 'Action and adventure'),
+              ("Three Men in a Boat", "Jerome, Jerome K.", 1889, 'Comedy'),
+              ("The Hound of the Baskervilles", "Conan Doyle, Arthur", 1902, 'Crime and mistery'),
+              ("The Call of Cthulhu", "Lovecraft, H.P.", 1928, 'Fantasy'),
+              ("The Witcher", "Sapkowski, Andrzej", 1990, 'Fantasy'),
+              ("Misery", "King, Stephen", 1987, 'Horror'),
+              ("Frankenstein", "Shelley, Mary", 1816, 'Science fiction'),
+              ("Pride and Prejudice", "Austen, Jane", 1813, 'Romance'),
+              ("The Selfish Gene", "Dawkins, Richard", 1976, 'Scientific'),
+              ("The Singularity is Near", "Kurzweil, Ray", 2006, 'Technical')
+                ]
+
+'''
+SELECT title, author, year, books.genre, description
+FROM books
+INNER JOIN genres
+ON books.genre = genres.genre
+'''
+
+
+add_books(conn, the_books_list)
 
 sys.exit()
-
-add_book(conn, ("Misery", "Stephen King", 'horror'))
-add_book(conn, ("Salsa", 'many', 'salsa'))
 
 cur = conn.cursor()
 cur.execute("SELECT * FROM books WHERE genre = 'horror'")
