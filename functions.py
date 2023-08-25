@@ -52,9 +52,6 @@ def add_book(conn, book):
     conn.commit()
 
 def add_books(conn, books_list):
-    # for book in books_list:
-    #     add_book(conn, book)
-    # or
     cur = conn.cursor()
     cur.executemany('''
         INSERT INTO books (title, author, year, genre)
