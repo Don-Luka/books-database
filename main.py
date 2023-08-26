@@ -40,12 +40,7 @@ create_books_table_sql = \
 execute_sql(conn, create_genres_table_sql)
 execute_sql(conn, create_books_table_sql)
 
-# add_book_genre(conn, ('horror', "scary")) # passed argument has to be a tuple
-
-
-
-add_book_genres(conn, 
-                [('Action and adventure', 'hero, adventure, journey'),
+genres_list = [('Action and adventure', 'hero, adventure, journey'),
                  ('Comedy', 'funny, parody, excitement'), 
                  ('Crime and mistery', 'crime, criminal, investigation, punishment'), 
                  ('Fantasy', 'magic, creatures, mythology'), 
@@ -53,12 +48,12 @@ add_book_genres(conn,
                  ('Science fiction', 'futuristic, science, time travel'),
                  ('Romance', 'love, relationship'),
                  ('Scientific', 'science, theory, empiricism'),
-                 ('Technical', 'research, experiment, technology')])
+                 ('Technical', 'research, experiment, technology')]
 
-the_books_list = [
+books_list = [
               ("Don Quixote", "de Cervantes, Miguel", 1605, 'Action and adventure'),
               ("Three Men in a Boat", "Jerome, Jerome K.", 1889, 'Comedy'),
-              ("The Hound of the Baskervilles", "Conan Doyle, Arthur", 1902, 'Crime and mistery'),
+              ("The Hound of the Baskervilles", "Conan doyle, Arthur", 1902, 'Crime and mistery'),
               ("The Call of Cthulhu", "Lovecraft, H.P.", 1928, 'Fantasy'),
               ("The Witcher", "Sapkowski, Andrzej", 1990, 'Fantasy'),
               ("Misery", "King, Stephen", 1987, 'Horror'),
@@ -68,29 +63,34 @@ the_books_list = [
               ("The Singularity is Near", "Kurzweil, Ray", 2006, 'Technical')
                 ]
 
-'''
-SELECT title, author, year, books.genre, description
-FROM books
-INNER JOIN genres
-ON books.genre = genres.genre
-'''
+add_book_genres(conn, genres_list)
+add_books(conn, books_list)
 
+rows = select_all(conn, 'genres')
+for row in rows:
+    print(row)
 
-add_books(conn, the_books_list)
+fantasy = select_book_by_genre(conn, 'Fantasy')
+for row in fantasy:
+    print(row)
 
+selection = select_book_by_key(conn, 'author', 'King, Stephen')
+for row in selection:
+    print(row)
+
+new_selection = select_where(conn, 'books', author = 'Conan Doyle, Arthur')
+for row in new_selection:
+    print(row)
+
+update(conn, 'books', 6, author = 'King, James', year = 1957)
+
+new_selection = select_all(conn, 'books')
+for row in new_selection:
+    print(row)
+
+delete_where(conn, 'books', author = 'King, James')
+
+new_selection = select_all(conn, 'books')
+for row in new_selection:
+    print(row)
 sys.exit()
-
-cur = conn.cursor()
-cur.execute("SELECT * FROM books WHERE genre = 'horror'")
-rows = cur.fetchall()
-print(rows)
-
-cur = conn.cursor()
-cur.execute("SELECT * FROM books WHERE genre = 'salsa'")
-rows = cur.fetchone()
-print(rows)
-
-
-
-# conn = create_connection('my_new_database.db')
-# conn.close()
