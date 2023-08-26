@@ -56,7 +56,7 @@ books_list = [
               ("The Hound of the Baskervilles", "Conan doyle, Arthur", 1902, 'Crime and mistery'),
               ("The Call of Cthulhu", "Lovecraft, H.P.", 1928, 'Fantasy'),
               ("The Witcher", "Sapkowski, Andrzej", 1990, 'Fantasy'),
-              ("Misery", "King, Stephen", 1987, 'Horror'),
+              ("Misery", "King, James", 1957, 'Horror'),
               ("Frankenstein", "Shelley, Mary", 1816, 'Science fiction'),
               ("Pride and Prejudice", "Austen, Jane", 1813, 'Romance'),
               ("The Selfish Gene", "Dawkins, Richard", 1976, 'Scientific'),
@@ -66,6 +66,8 @@ books_list = [
 add_book_genres(conn, genres_list)
 add_books(conn, books_list)
 
+add_book_genre(conn, ('History', 'history'))
+
 rows = select_all(conn, 'genres')
 for row in rows:
     print(row)
@@ -73,6 +75,9 @@ for row in rows:
 fantasy = select_book_by_genre(conn, 'Fantasy')
 for row in fantasy:
     print(row)
+
+
+
 
 selection = select_book_by_key(conn, 'author', 'King, Stephen')
 for row in selection:
@@ -82,15 +87,26 @@ new_selection = select_where(conn, 'books', author = 'Conan Doyle, Arthur')
 for row in new_selection:
     print(row)
 
-update(conn, 'books', 6, author = 'King, James', year = 1957)
+update(conn, 'books', 6, author = 'King, Stephen', year = 1987)
+update(conn, 'books', 3, author = 'Conan Doyle, Arthur')
 
 new_selection = select_all(conn, 'books')
 for row in new_selection:
     print(row)
 
-delete_where(conn, 'books', author = 'King, James')
+delete_where(conn, 'books', author = 'Sapkowski, Andrzej')
 
 new_selection = select_all(conn, 'books')
 for row in new_selection:
     print(row)
+
+execute_sql(conn, 
+'''
+SELECT books.title, books.genre, genres.description as genre_description
+FROM books
+INNER JOIN genres
+ON books.genre = genres.genre
+'''
+)
+
 sys.exit()
